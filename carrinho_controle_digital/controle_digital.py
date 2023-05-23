@@ -1,13 +1,14 @@
 import keyboard
 import serial
 from time import sleep
+import math as m
 
 
 import pygame
 from pygame.locals import *
 
 potencia = 0
-direcao = 0.5
+direcao = 3.1415 / 4
 
 
 # Example usage
@@ -43,30 +44,32 @@ def get_arrow_key():
                 quit()
             elif event.type == KEYDOWN:
                 if event.key == K_UP:
-                    potencia = 255
+                    potencia += 50
                 elif event.key == K_DOWN:
-                    potencia = 0
+                    potencia -= 50
                 elif event.key == K_LEFT:
                     direcao += 0.5
                 elif event.key == K_RIGHT:
                     direcao -= 0.5
 
-                if direcao > 1:
-                    direcao = 1
+                if direcao > 3.1415 / 2:
+                    direcao = 3.1415 / 2
                 if direcao < 0:
                     direcao = 0
 
-                potencia_roda_esquerda = int(potencia * (1 - direcao))
-                potencia_roda_direita = int(potencia * (direcao))
-                send_message(serial_port, f"01 {potencia_roda_direita} \n")
-                sleep(0.3)
-#    read_serial_data(serial_port, baud_rate)
-                send_message(serial_port, f"02 {potencia_roda_esquerda} \n")
-                sleep(0.3)
-#    read_serial_data(serial_port, baud_rate)
-
-
+                if potencia > 0:
+                    potencia_roda_esquerda = int(m.fabs(potencia * m.cos(direcao)))
+                    potencia_roda_direita = int(m.fabs(potencia *  (1 - m.cos(direcao))))
+        
+                    print(f"{potencia_roda_esquerda} 1 0 {potencia_roda_direita} 1 0 \n")
+                    send_message(serial_port, f"{potencia_roda_esquerda} 1 0 {potencia_roda_direita} 1 0 \n")
     
+                else:
+                    potencia_roda_esquerda = int(m.fabs(potencia * m.cos(direcao)))
+                    potencia_roda_direita = int(m.fabs(potencia *  (1 - m.cos(direcao))))
+        
+                    print(f"{potencia_roda_esquerda} 0 1 {potencia_roda_direita} 0 1 \n")
+                    send_message(serial_port, f"{potencia_roda_esquerda} 0 1 {potencia_roda_direita} 1 0 \n")
 
     #print(f"01 {potencia_roda_direita}\n")
     #print(f"02 {potencia_roda_esquerda}\n")

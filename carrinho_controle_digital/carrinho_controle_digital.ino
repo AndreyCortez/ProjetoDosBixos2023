@@ -32,15 +32,19 @@ void loop()
         receivedData.trim();                         // Remove leading and trailing whitespace characters
     }
 
+    if (receivedData != "")
+        receivedData += '\n';
+
     // send packet
     for (int i = 0; i < 10; i++)
     {
         LoRa.beginPacket();
+
+        if (receivedData != "")
+            Serial.print(receivedData.c_str());
         LoRa.print(receivedData.c_str());
         LoRa.endPacket();
     }
 
-    if (receivedData != "")
-        Serial.println(receivedData);
     receivedData = "";
 }
