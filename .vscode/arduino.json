@@ -1,5 +1,0 @@
-{
-    "sketch": "carrinho_controle_digital/carrinho_controle_digital.ino",
-    "port": "/dev/ttyACM0",
-    "board": "arduino:avr:uno"
-}
