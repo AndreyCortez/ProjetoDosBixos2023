@@ -33,18 +33,12 @@ void loop()
     }
 
     if (receivedData != "")
-        receivedData += '\n';
-
-    // send packet
-    for (int i = 0; i < 10; i++)
     {
+        // send packet
         LoRa.beginPacket();
-
-        if (receivedData != "")
-            Serial.print(receivedData.c_str());
+        Serial.print(receivedData.c_str());
         LoRa.print(receivedData.c_str());
         LoRa.endPacket();
     }
-
     receivedData = "";
 }
