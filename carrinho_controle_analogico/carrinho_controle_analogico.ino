@@ -44,6 +44,9 @@ void setup()
     pinMode(IN3, OUTPUT);
     pinMode(IN4, OUTPUT);
 
+    pinMode(ACELERADOR, INPUT);
+    pinMode(VOLANTE, INPUT);
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,8 +79,8 @@ void loop()
     int motor_esquerdo_in1 = 1;
     int motor_esquerdo_in2 = 0;
 
-    int motor_direito_in3 = 1;
-    int motor_direito_in4 = 0;
+    int motor_direito_in3 = 0;
+    int motor_direito_in4 = 1;
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////// Use esse espaço para realizar a leitura dos pinos //////////////////////////////////
@@ -95,14 +98,14 @@ void loop()
     ///////////////////////// Use esse espaço para fazer os cálculos do diferencial //////////////////////////////
 
     float torque_adicionado;
-    float diametro_da_roda = 2;
-    float distancia_entre_eixos = 2;
+    float diametro_da_roda = 6.5;
+    float distancia_entre_eixos = 12;
     float pi = 3.1415;
-    float range_volante = 24.5 * (pi / 180);
+    float range_volante = 90 * (pi / 180);
 
     torque_adicionado = diametro_da_roda * tan((direcao * range_volante)) / (2 * distancia_entre_eixos);
-    motor_esquerdo_potencia = potencia_bruto * (1 - torque_adicionado);
-    motor_direito_potencia = potencia_bruto * (1 + torque_adicionado);
+    motor_esquerdo_potencia = potencia_bruto * (1 - torque_adicionado) / 4;
+    motor_direito_potencia = potencia_bruto * (1 + torque_adicionado) / 4;
     motor_esquerdo_potencia = saturar(motor_esquerdo_potencia, 255, 0);
     motor_direito_potencia = saturar(motor_direito_potencia, 255, 0);
 
@@ -121,8 +124,11 @@ void loop()
     char _data[30] = "";
     sprintf(_data, "%d %d %d %d %d %d ", motor_esquerdo_potencia, motor_esquerdo_in1, motor_esquerdo_in2,
             motor_direito_potencia, motor_direito_in3, motor_direito_in4);
+    Serial.println(_data);
 
     LoRa.beginPacket();
     LoRa.print(_data);
     LoRa.endPacket();
+
+    delay(100);
 }
